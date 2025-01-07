@@ -7,6 +7,7 @@ import {
   createNavbarProfileLoading,
   createNavbarProfileSignin,
   createDeleteConfirmationModal,
+  createEditGroupModal,
 } from './createElements.js';
 
 const renderNotAuthenticatedPage = () => {
@@ -112,9 +113,10 @@ const renderGroupById = ({
   group,
   cardOnClick = () => {},
   onDelete = () => {},
+  onEdit = () => {},
   isSuperUser = false,
 }) => {
-  const card = createCard(group, cardOnClick, onDelete, isSuperUser);
+  const card = createCard(group, cardOnClick, onDelete, onEdit, isSuperUser);
   const mainContainer = document.querySelector('.group-container');
   const groupElement = document.getElementById(`group-${group.id}`);
   if (groupElement) {
@@ -155,6 +157,25 @@ const removeDeleteConfirmationModal = () => {
   }
 };
 
+const renderEditGroupModal = ({ onClose = () => {}, onSubmit = () => {} }) => {
+  const container = document.querySelector('body');
+  const existingBackdrop = document.querySelector('.backdrop');
+
+  if (existingBackdrop) {
+    container.removeChild(existingBackdrop);
+  }
+  const modal = createEditGroupModal(onClose, onSubmit);
+  container.appendChild(modal);
+};
+
+const removeEditGroupModal = () => {
+  const container = document.querySelector('body');
+  const backdrop = document.querySelector('.backdrop');
+  if (backdrop) {
+    container.removeChild(backdrop);
+  }
+};
+
 export {
   renderNotAuthenticatedPage,
   renderGroupCreationModal,
@@ -169,6 +190,8 @@ export {
   renderNoGroupFound,
   renderDeleteConfirmationModal,
   removeDeleteConfirmationModal,
+  renderEditGroupModal,
+  removeEditGroupModal,
   renderLoader,
   removeLoader,
 };

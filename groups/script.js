@@ -13,6 +13,8 @@ import {
   renderNotAuthenticatedPage,
   renderDeleteConfirmationModal,
   removeDeleteConfirmationModal,
+  renderEditGroupModal,
+  removeEditGroupModal,
   renderLoader,
   removeLoader,
 } from './render.js';
@@ -28,6 +30,7 @@ import {
   getParamValueFromURL,
   setParamValueInURL,
   deleteDiscordGroupRole,
+  EditDiscordGroupRole,
 } from './utils.js';
 
 const QUERY_PARAM_KEY = {
@@ -289,6 +292,7 @@ function renderAllGroups({ cardOnClick }) {
           group: group,
           cardOnClick: () => cardOnClick(id),
           onDelete: showDeleteModal,
+          onEdit: showEditGroupModal,
           isSuperUser: dataStore.isSuperUser,
         });
       }
@@ -312,6 +316,38 @@ function showDeleteModal(groupId) {
         dataStore.filteredGroupsIds = dataStore.filteredGroupsIds.filter(
           (id) => id !== groupId,
         );
+        renderAllGroups({
+          cardOnClick: groupCardOnAction,
+        });
+      } catch (error) {
+        showToaster(error.message || 'Failed to delete group');
+      } finally {
+        removeDeleteConfirmationModal();
+        removeLoader();
+      }
+    },
+  });
+}
+
+function showEditGroupModal(groupId) {
+  renderEditGroupModal({
+    onClose: () => {
+      removeEditGroupModal();
+    },
+    onSubmit: async () => {
+      renderLoader();
+      try {
+        const groupNameField = document.getElementById('edit_group_name');
+        const descriptionField = document.getElementById('edit_description');
+        const groupName = groupNameField.value;
+        const description = descriptionField.value;
+        console.log('fields ', groupId, groupName, description);
+        const UpdatedGroupDetails = {
+          groupId,
+          groupName,
+          description,
+        };
+        await EditDiscordGroupRole(UpdatedGroupDetails);
         renderAllGroups({
           cardOnClick: groupCardOnAction,
         });

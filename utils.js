@@ -1,5 +1,5 @@
 function goToAuthPage() {
-  const authUrl = `https://github.com/login/oauth/authorize?client_id=23c78f66ab7964e5ef97&}&state=${window.location.href}`;
+  const authUrl = `https://github.com/login/oauth/authorize?client_id=Ov23ligHjFYgaLcpvK8x&}&state=${window.location.href}`;
 
   window.open(authUrl, '_self');
 }

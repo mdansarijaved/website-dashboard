@@ -376,6 +376,30 @@ body {
   opacity: 1;
   scale: 1.2;
 }
+.delete-edit-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75em;
+}
+.edit-group {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.edit-group__icon {
+  height: 1.2em;
+  opacity: 0.5;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out,
+    scale 0.2s ease-in-out;
+}
+
+.edit-group:hover .edit-group__icon {
+  transform: rotate(10deg);
+  opacity: 1;
+  scale: 1.2;
+}
 
 .card__title {
   font-size: 1.1rem;
@@ -495,6 +519,7 @@ body {
   justify-content: center;
   position: sticky;
   top: 0;
+  z-index: 1;
 }
 
 .navbar__container {
@@ -572,6 +597,7 @@ body {
   top: 20px;
   right: 20px;
   width: 300px;
+  z-index: 20;
 }
 
 .toast__message {
@@ -698,6 +724,80 @@ For Delete Confirmation Modal
 
 .button--danger:hover {
   background-color: #c82333;
+}
+
+/*
+For edit group functionality
+*/
+
+.edit-group-modal {
+  background-color: var(--color-white);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  position: relative;
+}
+
+.edit-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.edit-modal__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+.edit-modal__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-modal__content {
+}
+
+.edit-modal__msg {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+}
+.edit-group-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.edit-modal__buttons {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 24px;
+}
+.edit-group-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.edit-group-input__field {
+  all: unset;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #dcdcdc;
+}
+.edit-description {
+  height: 188px;
+}
+.edit-modal-submit-button {
+  all: unset;
+  background: #423a8c;
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: white;
 }
 
 /*

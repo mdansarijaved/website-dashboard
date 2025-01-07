@@ -139,6 +139,36 @@ async function deleteDiscordGroupRole(groupId) {
   }
 }
 
+async function EditDiscordGroupRole(updatedGroupRoleBody) {
+  try {
+    const { groupId, groupName, description } = updatedGroupRoleBody;
+    const groupBody = {
+      rolename: groupName,
+      description,
+    };
+    console.log(groupId, groupName, description);
+    const res = await fetch(`${BASE_URL}/discord-actions/groups/${groupId}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(groupBody),
+    });
+
+    if (!res.ok) {
+      const errorResponse = await res.json();
+      throw new Error(
+        `Failed to delete group role: ${JSON.stringify(errorResponse.error)}`,
+      );
+    }
+
+    return await res.json();
+  } catch (err) {
+    throw err;
+  }
+}
+
 function removeGroupKeywordFromDiscordRoleName(groupName) {
   if (/^group.*/.test(groupName)) {
     const splitNames = groupName.split('-');
@@ -191,4 +221,5 @@ export {
   getDiscordGroupIdsFromSearch,
   getParamValueFromURL,
   setParamValueInURL,
+  EditDiscordGroupRole,
 };

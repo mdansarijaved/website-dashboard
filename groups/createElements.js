@@ -2,6 +2,7 @@ const createCard = (
   rawGroup,
   onClick = () => {},
   onDelete = () => {},
+  onEdit = () => {},
   isSuperUser = false,
 ) => {
   const group = {
@@ -11,6 +12,10 @@ const createCard = (
       'Please ask the role creator or admin to update this group description.',
   };
 
+  const isDevMode = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('dev') === 'true';
+  };
   const cardElement = document.createElement('div');
   cardElement.className = 'card';
   cardElement.id = `group-${group.id}`;
@@ -19,10 +24,21 @@ const createCard = (
           <h5 class="card__title"></h5>
           ${
             isSuperUser
-              ? `
-            <button class="delete-group">
-              <img class="delete-group__icon" src="assets/delete.svg" alt="Delete" />
-            </button>`
+              ? !isDevMode()
+                ? `
+                <button class="delete-group">
+                <img class="delete-group__icon" src="assets/delete.svg" alt="Delete" />
+                </button>`
+                : `
+                <div class="delete-edit-container">
+                <button class="delete-group">
+                <img class="delete-group__icon" src="assets/delete.svg" alt="Delete" />
+                </button>
+                <button class="edit-group">
+                <img class="edit-group__icon" src="assets/edit.svg" alt="Edit-group" />
+                </button>
+                </div>
+                `
               : ''
           }  
         </div>
@@ -38,20 +54,34 @@ const createCard = (
 
   if (group.isUpdating)
     cardElement.querySelector('.card__btn').classList.add('button--blocked');
+
   cardElement.querySelector('.card__title').textContent = group.title;
+
   cardElement.querySelector('.card__description').textContent =
     group.description;
+
   cardElement.querySelector('.card__btn').textContent = group.isMember
     ? 'Remove me'
     : 'Add me';
+
   if (group.isMember)
     cardElement.querySelector('.card__btn').classList.add('button--secondary');
+
   cardElement.querySelector('.card__count-text').textContent = group.count;
+
   cardElement
     .querySelector('.card__btn')
     .addEventListener('click', () => group.isUpdating || onClick());
 
   if (isSuperUser) {
+    if (isDevMode) {
+      cardElement
+        .querySelector('.edit-group')
+        .addEventListener('click', (e) => {
+          e.stopPropagation();
+          onEdit(rawGroup.id);
+        });
+    }
     cardElement
       .querySelector('.delete-group')
       .addEventListener('click', (e) => {
@@ -276,6 +306,58 @@ const createDeleteConfirmationModal = (
   return backdropElement;
 };
 
+const createEditGroupModal = (onClose = () => {}, onSubmit = () => {}) => {
+  const backdropElement = document.createElement('div');
+  backdropElement.className = 'backdrop';
+  const modalElement = document.createElement('div');
+  modalElement.className = 'edit-group-modal';
+  modalElement.innerHTML = `
+    <div class="edit-modal__header">
+      <h2 class="edit-modal__title">Edit Title & Description</h2>
+      <button type="button" id="close-button" class="edit-modal__close">
+        <img src="assets/close.svg" alt="Close" />
+      </button>
+    </div>
+      <div class="edit-modal__content">
+      <form class="edit-group-form">
+        <div class="edit-group-input" id="group-name">
+          <label for="edit_group_name" class="input__label">Group Name</label>
+          <input
+            class="edit-group-input__field"
+            type="text"
+            id="edit_group_name"
+            name="edit_group_name"
+            placeholder="E.g  Group developers"
+          />
+        </div>
+        <div class="edit-group-input" id="description">
+          <label for="edit_description" class="input__label">Description</label>
+          <textarea
+            class="edit-group-input__field edit-description"
+            id="edit_description"
+            name="edit_description"
+            placeholder="Can you help me design a game concept that teaches basic programming skills? "
+          ></textarea>
+        </div>
+      </form>
+    </div>
+    
+    <div class="edit-modal__buttons">
+      <button class="edit-modal-submit-button" id="confirm-edit">Submit</button>
+    </div>
+  `;
+
+  modalElement.querySelector('#close-button').onclick = onClose;
+  modalElement.querySelector('#confirm-edit').onclick = onSubmit;
+
+  backdropElement.appendChild(modalElement);
+  backdropElement.onclick = (e) => {
+    if (e.target === backdropElement) onClose();
+  };
+
+  return backdropElement;
+};
+
 export {
   createCard,
   createLoadingCard,
@@ -285,4 +367,5 @@ export {
   createNavbarProfileSignin,
   createGroupCreationModal,
   createDeleteConfirmationModal,
+  createEditGroupModal,
 };
